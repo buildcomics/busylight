@@ -22,9 +22,10 @@ Note, the GPIO pins are based on the following piece of code in main.c. You can 
 To run this with your UC program, you need to download the appropriate driver from: https://www.plenom.com/downloads/download-software/ \
 
 ## Basic installation
-1. Press the button on your raspberry pi Pico, and then connect it to your computer
-2. copy the "main.uf2" from the release page to the "RPI2" that shows up as a mass storage usb devcie
-3. Make sure your PC side software is installed
+1. Download main.uf2 from the releases page: https://github.com/buildcomics/Busylight/releases
+2. Press the button on your raspberry pi Pico, and then connect it to your computer
+3. copy the "main.uf2" from the release page to the "RPI2" that shows up as a mass storage usb devcie
+4. Make sure your PC side software is installed
 
 ## Main Code
 The main code is based on Tinyusb: https://github.com/hathach/tinyusb \
