@@ -11,14 +11,10 @@
 
 #include "usb_descriptors.h"
 
-#define BTN_1_GPIO 9
-#define BTN_2_GPIO 4
-#define LED_1_RED_GPIO 8
-#define LED_1_GREEN_GPIO 10
-#define LED_1_BLUE_GPIO 11
+#define LED_1_RED_GPIO 5
+#define LED_1_GREEN_GPIO 7
+#define LED_1_BLUE_GPIO 6
 
-#define EVENT_MASK_LOW 0x1
-#define EVENT_MASK_HIGH 0x2
 #define PWM_COUNT_TOP 100
 
 //Function Prototypes
@@ -33,31 +29,18 @@ int main() {
     tusb_init();
     printf("DEBUG: HID Device initialized\n");
 
-    //Setup GPIO with callback:
-    gpio_pull_up(BTN_1_GPIO); //Enable pullup on button 1 IO
-    gpio_pull_up(BTN_2_GPIO); //Enable pullup on button 2 IO
-    gpio_set_irq_enabled_with_callback(BTN_1_GPIO, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true, &btn_callback); //Set IRQ interrupt when switch has rising edge
-    gpio_set_irq_enabled_with_callback(BTN_2_GPIO, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true, &btn_callback); //Set IRQ interrupt when switch has rising edge
-
-    //setup LED gpio
-    //gpio_init(LED_1_RED_GPIO);
-    //gpio_set_dir(LED_1_RED_GPIO, GPIO_OUT);
-
     //setup LED PWM
-     // Configure PWM slice and set it running
     pwm_config cfg = pwm_get_default_config();
     pwm_config_set_wrap(&cfg, PWM_COUNT_TOP);
     pwm_init(pwm_gpio_to_slice_num(LED_1_RED_GPIO), &cfg, true);
     pwm_init(pwm_gpio_to_slice_num(LED_1_GREEN_GPIO), &cfg, true);
     pwm_init(pwm_gpio_to_slice_num(LED_1_BLUE_GPIO), &cfg, true);
 
-    // Note we aren't touching the other pin yet -- PWM pins are outputs by
-    // default, but change to inputs once the divider mode is changed from
-    // free-running. It's not wise to connect two outputs directly together!
     gpio_set_function(LED_1_RED_GPIO, GPIO_FUNC_PWM);
     gpio_set_function(LED_1_GREEN_GPIO, GPIO_FUNC_PWM);
     gpio_set_function(LED_1_BLUE_GPIO, GPIO_FUNC_PWM);
 
+    //Cycle through led colours as part of startup test
     pwm_set_gpio_level(LED_1_RED_GPIO, 1 * (PWM_COUNT_TOP + 1));
     sleep_ms(500);
     pwm_set_gpio_level(LED_1_RED_GPIO, 0 );
@@ -96,9 +79,7 @@ void tud_resume_cb(void) {
     printf("DEBUG: Resumed Mounted\n");
 }
 
-//--------------------------------------------------------------------+
-// USB HID
-//--------------------------------------------------------------------+
+// USB HID main task
 void hid_task(void) {
     // Poll every 10ms
     const uint32_t interval_ms = 10;
@@ -118,20 +99,15 @@ void hid_task(void) {
 
 
 }
-
 // Invoked when received control request with VENDOR TYPE
-//TU_ATTR_WEAK bool tud_vendor_control_request_cb(uint8_t rhport, tusb_control_request_t const * request);
 bool tud_vendor_control_request_cb(uint8_t rhport, tusb_control_request_t const * request) {
-    // TODO not Implemented
     printf("DEBUG: tud_vendor_control_request_cb triggered\n");
     (void) rhport;
     (void) request;
 
     return 0;
 }
-
 // Invoked when vendor control request is complete
-//TU_ATTR_WEAK bool tud_vendor_control_complete_cb(uint8_t rhport, tusb_control_request_t const * request);
 bool tud_vendor_control_complete_cb(uint8_t rhport, tusb_control_request_t const * request) {
     // TODO not Implemented
     printf("DEBUG: tud_vendor_control_complete_cb triggered\n");
@@ -140,9 +116,6 @@ bool tud_vendor_control_complete_cb(uint8_t rhport, tusb_control_request_t const
 
     return 0;
 }
-
-
-
 
 //attempt to use:
 // Invoked when received GET_REPORT control request
@@ -158,7 +131,6 @@ uint16_t tud_hid_get_report_cb(uint8_t report_id, hid_report_type_t report_type,
 
     return 0;
 }
-
 // Invoked when received SET_REPORT control request or
 // received data on OUT endpoint ( Report ID = 0, Type = 0 )
 void tud_hid_set_report_cb(uint8_t report_id, hid_report_type_t report_type, uint8_t const *buffer, uint16_t bufsize) {
@@ -212,34 +184,4 @@ void tud_hid_set_report_cb(uint8_t report_id, hid_report_type_t report_type, uin
     (void) report_type;
     (void) buffer;
     (void) bufsize;
-}
-
-
-void btn_callback(uint gpio, uint32_t events) {
-    printf("DEBUG: btn_callback triggered\n");
-    printf("DEBUG: gpio: %d\n", gpio);
-    printf("DEBUG: events: %d\n", events);
-
-    if (events == GPIO_IRQ_EDGE_FALL && gpio == BTN_1_GPIO) {
-        printf("DEBUG: Falling Edge on Button 1\n");
-        gpio_put(LED_1_RED_GPIO, 1); //Turn on the LED
-        /*------------- Keyboard -------------*/
-        if (tud_hid_ready()) {
-            uint8_t keycode[6] = {0};
-            keycode[0] = HID_KEY_A;
-            tud_hid_keyboard_report(REPORT_ID_KEYBOARD, 0, keycode);
-        }
-    }
-    else if (events == GPIO_IRQ_EDGE_FALL && gpio == BTN_2_GPIO) {
-        if (tud_hid_ready()) {
-            printf("DEBUG: Falling Edge on Button 2\n");
-//            tud_hid_mouse_report(REPORT_ID_TELEPHONE, 0x00, 5, 5, 0, 0); //move down and right with delta 5
-        }
-    }
-    else {
-        gpio_put(LED_1_RED_GPIO, 0); //Turn off the LED
-        if (tud_hid_ready()) {
-            tud_hid_keyboard_report(REPORT_ID_KEYBOARD, 0, NULL);
-        }
-    }
 }

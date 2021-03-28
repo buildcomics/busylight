@@ -3,80 +3,52 @@ This is the GitHub repository for the project: https://buildcomics.com/ (TO Be D
 You will also find the "instructions"  there!
 
 ## Models
-Find all the models for the keyboard here: (TODO)
+Find all the models for the Busylight here: (TODO)
+
+## Wiring
+I used one common cathode RGB LED 5mm wired with resistors. The led pinout goes as follows, counted from pin 1 as being the pin closest to the flat in the bottom of the LED:\
+1. Pin 1:RED, 68 ohm ==> GPIO 5
+2. Pin 2:CC, ==> GND
+3. Pin 3:BLUE, 15 ohm ==> GPIO 6
+4. Pin 4:GREEN, 39 ohm ==> GPIO 7
+
+Note, the GPIO pins are based on the following piece of code in main.c. You can freely change these (apart from GPIO 0 & 1) by changing this code:
+```
+#define LED_1_RED_GPIO 5
+#define LED_1_GREEN_GPIO 7
+#define LED_1_BLUE_GPIO 6
+```
+## Computer Side Software
+To run this with your UC program, you need to download the appropriate driver from: https://www.plenom.com/downloads/download-software/ \
+
+## Basic installation
+1. Press the button on your raspberry pi Pico, and then connect it to your computer
+2. copy the "main.uf2" from the release page to the "RPI2" that shows up as a mass storage usb devcie
+3. Make sure your PC side software is installed
 
 ## Main Code
 The main code is based on Tinyusb: https://github.com/hathach/tinyusb \
-The device should mimic a telephony HID device, as specified by Microsoft teams here: https://docs.microsoft.com/en-us/skypeforbusiness/certification/test-spec \
-The actual document with the specs is in this zip file: https://download.microsoft.com/download/9/f/6/9f63c68d-817b-40ff-935c-9dd8b74cb07d/V4%20Release.zip  \
-file name: Teams_DevicesGeneralSpecification_4_0_final.pdf
+The device mimics a Plenom Kuando Busylight Omega model
 \
-also interesting, the SkypeforBusiness_CallDisplaySpecification_3_0_Final.pdf has custom HID usage pages for display setup. This could be more usefull to make a busylight of. \ I'm planning on getting my USB busylight from the office to steal it's HID Descriptors and see what they do.
+I used https://github.com/mitrefccace/busylightapi as a reference to reverse engineer the protocol
 
-More usefull explanation here: https://eleccelerator.com/tutorial-about-usb-hid-report-descriptors/
-
-\
-
-And background spec: https://www.usb.org/hid
-
-\
-
-And a more readable explanation of this: https://docs.microsoft.com/en-us/windows-hardware/drivers/hid/hid-usages
-
-## Testing
-Command to test HID descriptor of file: \
-`sudo usbhid-dump -a 1:58 | grep -v : | xxd -r  -p | hidrd-convert -o spec`
-\
-using the hidrd tool from: https://github.com/DIGImend/hidrd
-
-## Wiring
-TODO
-
-## Raspberry Pi Pico
+### Compiling the code
+If you want to change the code and nteed to compile it, do the following:
 Assuming you have the raspberry pi pico c SDK installed(https://github.com/raspberrypi/pico-sdk) \
 The following (standard) commands will create "main.uf2" that can be copied onto the raspberry pi in bootsel mode:
-1. git clone git@github.com:buildcomics/mst_keyboard.git
-2. cd mst_keyboard
+1. git clone git@github.com:buildcomics/Busylight.git
+2. cd Busylight
 3. mkdir build
 4. cd build
 5. cmake ..
 6. make
 7. Now press the button on your raspbery pi pico, connect it and copy the main.uf2 to the pico that should show up ass a mass storage device
 
-usb urb request:
-```
-char packet_bytes[] = {
-  0x8f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-  0x06, 0x04, 0x55, 0xff, 0xff, 0xff, 0x03, 0xeb
-};
-```
-Response:
-```
-char packet_bytes[] = {
-  0x30, 0x30, 0x30, 0x31, 0x50, 0x4c, 0x45, 0x4e,
-  0x4f, 0x4d, 0x30, 0x30, 0x30, 0x30, 0x30, 0x31,
-  0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x31,
-  0x44, 0x41, 0x53, 0x41, 0x4e, 0x30, 0x30, 0x30,
-  0x32, 0x30, 0x31, 0x35, 0x30, 0x35, 0x32, 0x38,
-  0x30, 0x32, 0x31, 0x30, 0x30, 0x30, 0x30, 0x30,
-  0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30,
-  0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30
-};
-```
-
-## USB Pcap in "pico and kunado.pcap"
-- Pico start: 40.85, source 2.10.0, wireshark filter: usb.device_address == 10
-- Kuando start: 71.89, source 2.11.0, wireshark filter: usb.device_address == 11
-
-# Debug OUTPUT
-Debug output of the same thing is stored in "pico usb debug output.txt"
-Working with setting of debug = 2
+## Testing
+Command to test HID descriptor of file: \
+`sudo usbhid-dump -a 1:58 | grep -v : | xxd -r  -p | hidrd-convert -o spec`
+\
+using the hidrd tool from: https://github.com/DIGImend/hidrd
 
 ## License
 MIT License
