@@ -1,4 +1,4 @@
-# 3D Printer Control MKII
+# Rasperry Pi Pico Busylight
 This is the GitHub repository for the project: https://buildcomics.com/ (TO Be Determined) \
 You will also find the "instructions"  there!
 
@@ -18,14 +18,11 @@ Note, the GPIO pins are based on the following piece of code in main.c. You can 
 #define LED_1_GREEN_GPIO 7
 #define LED_1_BLUE_GPIO 6
 ```
-## Computer Side Software
-To run this with your UC program, you need to download the appropriate driver from: https://www.plenom.com/downloads/download-software/ \
-
 ## Basic installation
 1. Download main.uf2 from the releases page: https://github.com/buildcomics/Busylight/releases
 2. Press the button on your raspberry pi Pico, and then connect it to your computer
 3. copy the "main.uf2" from the release page to the "RPI2" that shows up as a mass storage usb devcie
-4. Make sure your PC side software is installed
+4. To run this with your UC program, you need to download the appropriate driver from: https://www.plenom.com/downloads/download-software/ \
 
 ## Main Code
 The main code is based on Tinyusb: https://github.com/hathach/tinyusb \
