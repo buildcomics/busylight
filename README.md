@@ -3,8 +3,8 @@ This is the GitHub repository for the project: https://buildcomics.com/ (TO Be D
 You will also find the "instructions"  there!
 
 ## Models
-Find all the models for the Busylight here: (TODO)
-
+Find all the models for the Busylight here: https://www.prusaprinters.org/prints/64085-raspberry-pi-pico-busylight
+ 
 ## Wiring
 I used one common cathode RGB LED 5mm wired with resistors. The led pinout goes as follows, counted from pin 1 as being the pin closest to the flat in the bottom of the LED:\
 1. Pin 1:RED, 68 ohm ==> GPIO 5
