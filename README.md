@@ -4,7 +4,15 @@ You will also find the "instructions"  there!
 
 ## Models
 Find all the models for the Busylight here: https://www.prusaprinters.org/prints/64085-raspberry-pi-pico-busylight
- 
+
+## Bill Of Materials (BOM)
+1. 1 x Raspberry Pi pico
+2. 1 x 5mm RGB led common cathode
+3. 1 x 86 Ohm 1/4w resistor
+4. 1 x 15 Ohm 1/4w resistor
+5. 1 x 39 Ohm 1/4w resistor
+6. The models (see above) 3d Printed
+
 ## Wiring
 I used one common cathode RGB LED 5mm wired with resistors. The led pinout goes as follows, counted from pin 1 as being the pin closest to the flat in the bottom of the LED:\
 1. Pin 1:RED, 68 ohm ==> GPIO 5
