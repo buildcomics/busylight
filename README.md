@@ -14,7 +14,7 @@ Find all the models for the Busylight here: https://www.prusaprinters.org/prints
 6. The models (see above) 3d Printed
 
 ## Wiring
-I used one common cathode RGB LED 5mm wired with resistors. The led pinout goes as follows, counted from pin 1 as being the pin closest to the flat in the bottom of the LED:\
+I used one common cathode RGB LED 5mm wired with resistors. The led pinout goes as follows, counted from pin 1 as being the pin closest to the flat in the bottom of the LED:\ (Note, some RGB LEDS are wired Red, GND, Green, Blue)!
 1. Pin 1:RED, 68 ohm ==> GPIO 5
 2. Pin 2:CC, ==> GND
 3. Pin 3:BLUE, 15 ohm ==> GPIO 6
